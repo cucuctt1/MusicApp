@@ -38,11 +38,11 @@ def main(page: ft.Page):
     global chunks_duration
     page.window.width = 300
     page.window.height = 450
-    dura = DuraController(280,10)
+    #DuraController(280,10)
     player = pb.StreamingAudioPlayer()
     
-    duration,file,chunks,chunks_duration = sc.get_header_data("sample2")
-
+    duration,file,chunks,chunks_duration = sc.get_header_data("sample3")
+    dura = dura_bar(width=280,height=15,duration=duration,dura_width=200,dura_height=10,text_width=30,player=player)
     
     os.makedirs(f"./asset/cache/{file}/",exist_ok=True)
     dura.duration = duration
@@ -55,9 +55,8 @@ def main(page: ft.Page):
     while isplay:
         buffduration = bt
         current_time = player.current_time
-        if not dura.in_seek:
-            dura.update_buffer(buffduration)
-            dura.update_duration(current_time)
+        if not dura.DURA.in_seek:
+            dura.update_progress(current_time)
         dura.update()
         time.sleep(0.1)
     

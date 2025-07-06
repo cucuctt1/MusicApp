@@ -50,7 +50,7 @@ class StreamingAudioPlayer:
     def wait_for_buffer(self, min_wait=0.1, max_wait=5):
         """Block until buffer is filled again (simulate slow net)"""
         waited = 0
-        while self.buffer.empty() and self.playing and not self.paused:
+        while len(self.buffer)==0 and self.playing and not self.paused:
             time.sleep(min_wait)
             waited += min_wait
             if waited >= max_wait:

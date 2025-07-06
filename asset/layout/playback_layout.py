@@ -172,7 +172,7 @@ class DuraController(Duration_bar):
         # call interval 0.1 sec to update the duration calculte latency
         self.current_duration = duration
         #calculate percent progress
-        progress = duration/self.duration
+        progress = duration/max(self.duration,1)
         self.progress_percent = progress
         self.update_bar()
     
@@ -181,7 +181,7 @@ class DuraController(Duration_bar):
         self.current_buffer = time
         self.current_buffer = min(self.duration,self.current_buffer)
 
-        percent = self.current_buffer/self.duration
+        percent = self.current_buffer/max(self.duration,1)
         self.buffer_percent = percent
         self.update_bar()
 
@@ -200,7 +200,57 @@ class DuraController(Duration_bar):
             self.player.seek(second)
         
         
+class dura_bar(ft.Row):
+    def __init__(self,width,height,duration,dura_width,dura_height,text_width,player):
+        super().__init__()
+        self.width = width
+        self.height = height
+        self.duration = duration
+        self.dura_width = dura_width
+        self.dura_height = dura_height
 
+        #self.alignment = ft.MainAxisAlignment.SPACE_EVENLY
+        self.vertical_alignment = ft.CrossAxisAlignment.START
+        self.current_duration = 0
+        
+        self.current_DR_T = self.sec2min(0)
+        self.E_DR_T = self.sec2min(duration)
+
+        self.current_DR_W = ft.Text(value=self.current_DR_T,color="WHITE",width=text_width,height=self.height,text_align=ft.TextAlign.JUSTIFY,size =10)
+        self.E_DR_W =  ft.Text(value=self.E_DR_T,color="WHITE",width=text_width,height=self.height,text_align=ft.TextAlign.JUSTIFY,size=10)
+        self.DURA = DuraController(self.dura_width,self.dura_height)
+        self.DURA.duration = duration
+        self.player = player
+        self.DURA.player = player
+        self.controls = [self.current_DR_W,self.DURA,self.E_DR_W]
+
+
+        #for buffer control
+        self.buffer_controller = None
+        
+
+    def sec2min(self,second):
+        minute = int(second//60)
+        remain = int(second-minute*60)
+
+        return f"{minute:02d}:{remain:02d}"
+    
+    def update_progress(self,second):
+
+        self.current_DR_T = self.sec2min(second)
+        self.current_DR_W.value = self.current_DR_T
+
+
+        self.DURA.update_buffer(second)
+        self.DURA.update_duration(second)
+
+        self.update()
+
+    
+
+
+
+    
 
     
 
