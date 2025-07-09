@@ -13,7 +13,7 @@ class music_tile(ft.Container):
         self.padding = ft.padding.only(left=10)
         self.text = ft.Text(value=self.value,width=self.width,height=self.height,size=self.height-5,color="WHITE")
 
-        self.alignment = ft.alignment.center_left
+        self.alignment = ft.alignment.top_left
         self.content = self.text
 
 
@@ -27,4 +27,4 @@ if __name__ == "__main__":
         page.update()
         
 
-ft.app(target=main)
+    ft.app(target=main)

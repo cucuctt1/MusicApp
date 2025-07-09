@@ -30,4 +30,4 @@ if __name__ == "__main__":
         page.update()
         
 
-ft.app(target=main)
+    ft.app(target=main)

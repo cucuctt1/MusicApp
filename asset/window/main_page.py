@@ -2,9 +2,9 @@ import flet as ft
 import ctypes
 import time
 from ctypes import wintypes
-import system_func
+from asset.window import system_func
 import os
-import window_func
+from asset.window import window_func
 
 
 
@@ -78,8 +78,6 @@ if __name__ == "__main__":
         page.add(main_w)
         page.padding = 0
         page.update()
-        with open("flet_pid.txt", "w") as f:
-            f.write(str(os.getpid()))
         
 
     ft.app(target=main)
