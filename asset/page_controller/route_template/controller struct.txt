@@ -1,0 +1,75 @@
+APP ARCHITECTURE (IMPROVED)
+
+1. MainController
+- Holds route_tree (list of route dicts, one per level)
+- Manages level-based navigation (navigate_to(route, level))
+- Validates route type
+- Dispatches to correct PageController
+- Calls restore(route_data, parent_context)
+- Caches page controllers if desired
+- Stores/restores app session with AppData
+
+2. PageController (inherits from SchematicController)
+Each page controller:
+- Implements:
+    - restore(route_data, parent_context=None)
+    - save() → route_data
+    - render() → returns Flet UI
+- Validates parent context if needed (requires_context)
+- Returns a PageData object:
+
+PageData = {
+    view: Flet UI object,
+    page_data: {...},       # dynamic state
+    can_cache: True/False,  # if eligible for AppData saving
+    requires_context: str,  # optional: "artist", "search", etc.
+}
+
+3. Route Tree (List-Based Navigation State)
+
+route_tree = [
+    {"type": "playback", "song": "123"},                # Lv1
+    {"type": "search", "query": "beatles"},             # Lv2
+    {"type": "artist", "id": "beatles"},                # Lv3
+    {"type": "album_select", "artist_id": "beatles"},   # Lv4
+    {"type": "album", "id": "abbey_road"},              # Lv5
+]
+
+- Only one item per level
+- Replaces when navigating to same level
+- Pops deeper levels on jump
+
+4. AppData (Persistent Storage)
+Stores:
+- Last route_tree
+- Last scroll positions per page
+- Theme, volume, settings
+- Any page_data where can_cache = True
+
+On app launch:
+- Load AppData
+- Call MainController.restore(route_tree)
+- Restore each page with stored data
+
+5. Signal Flow
+
+[User taps on item]
+   ↓
+MainController.navigate_to(route_data, level)
+   ↓
+→ Slices route_tree
+→ Finds PageController
+→ Passes route_data + parent_context
+→ Calls restore() → render()
+→ Receives PageData → renders view
+
+6. Back Navigation
+- MainController.go_back():
+    - Pops last level from route_tree
+    - Calls restore() on new top route
+    - Handles fallback if route is missing
+
+Notes:
+- parent_context can be built by passing the previous level’s data to the current page
+- Each controller validates its own input for safety
+- Caching only happens for marked pages (can_cache = True)
