@@ -4,6 +4,10 @@ import queue
 import pyaudio
 from pydub import AudioSegment
 from io import BytesIO
+
+
+
+#need rework
 class StreamingAudioPlayer:
     def __init__(self, chunk_ms=100):
         self.buffer = []
